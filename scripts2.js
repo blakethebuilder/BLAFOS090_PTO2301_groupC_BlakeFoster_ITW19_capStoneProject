@@ -248,19 +248,21 @@ search.form.addEventListener("submit", (event) => {
   const selectedAuthor = search.authors.value;
 
   // Perform the search operation based on the search term, genre, and author
-  const searchResults = books.filter((book) => {
+  const searchResults = [];
+
+  for (let i = 0; i < books.length; i++) {
+    const book = books[i];
     const bookTitle = book.title.toLowerCase();
-    const bookAuthor = authors[book.author].toLowerCase();
-    const bookGenre = genres[book.genre].toLowerCase();
 
     const matchesTitle = bookTitle.includes(searchTerm);
     const matchesAuthor =
       selectedAuthor === "any" || bookAuthor.includes(selectedAuthor);
-    const matchesGenre =
-      selectedGenre === "any" || bookGenre.includes(selectedGenre);
+    const matchesGenre = selectedGenre === "any" || bookGenre === selectedGenre;
 
-    return matchesTitle && matchesAuthor && matchesGenre;
-  });
+    if (matchesTitle && matchesAuthor && matchesGenre) {
+      searchResults.push(book);
+    }
+  }
 
   // Display the search results
   displaySearchResults(searchResults);
@@ -276,7 +278,7 @@ function filterBooks() {
       .toLowerCase()
       .includes(searchInput);
     const genreMatches =
-      selectedGenre === "all" || book.genre === selectedGenre;
+      selectedGenre === "any" || genres[book.genres] === selectedGenre;
 
     return titleMatches || authorMatches || genreMatches;
   });
