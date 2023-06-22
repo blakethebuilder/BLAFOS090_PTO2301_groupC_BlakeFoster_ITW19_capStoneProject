@@ -309,6 +309,8 @@ search.cancelButton.addEventListener("click", () => {
   search.overlay.close();
 });
 
+// help me!
+
 dataList.button.addEventListener("click", closeDataListPreview);
 
 dataList.items.addEventListener("click", openDataListPreview);
