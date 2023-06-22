@@ -226,10 +226,84 @@ dataList.button.addEventListener("click", () => {
     </span>`;
 });
 
+// Search button click event handler
 header.searchButton.addEventListener("click", () => {
+  // Focus on the search input field
   search.title.focus();
+  // Show the search overlay
   search.overlay.showModal();
 });
+
+// Search form submit event handler
+search.form.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  // Get the search term from the input field
+  const searchTerm = search.title.value.toLowerCase().trim();
+
+  // Get the selected genre from the dropdown
+  const selectedGenre = search.genres.value;
+
+  // Get the selected author from the dropdown
+  const selectedAuthor = search.authors.value;
+
+  // Perform the search operation based on the search term, genre, and author
+  const searchResults = books.filter((book) => {
+    const bookTitle = book.title.toLowerCase();
+    const bookAuthor = authors[book.author].toLowerCase();
+    const bookGenre = genres[book.genre].toLowerCase();
+
+    const matchesTitle = bookTitle.includes(searchTerm);
+    const matchesAuthor =
+      selectedAuthor === "any" || bookAuthor.includes(selectedAuthor);
+    const matchesGenre =
+      selectedGenre === "any" || bookGenre.includes(selectedGenre);
+
+    return matchesTitle && matchesAuthor && matchesGenre;
+  });
+
+  // Display the search results
+  displaySearchResults(searchResults);
+});
+
+function filterBooks() {
+  const searchInput = search.title.value.toLowerCase();
+  const selectedGenre = search.genres.value;
+
+  const filteredBooks = books.filter((book) => {
+    const titleMatches = book.title.toLowerCase().includes(searchInput);
+    const authorMatches = authors[book.author]
+      .toLowerCase()
+      .includes(searchInput);
+    const genreMatches =
+      selectedGenre === "all" || book.genre === selectedGenre;
+
+    return titleMatches || authorMatches || genreMatches;
+  });
+
+  displayBooks(filteredBooks);
+}
+
+// Function to display search results
+function displaySearchResults(results) {
+  // Clear the existing search results
+  dataList.items.innerHTML = "";
+
+  // Create a fragment to hold the search result elements
+  const fragment = document.createDocumentFragment();
+
+  // Loop through the search results and create the preview elements
+  for (const book of results) {
+    const extractedBook = createPreviewElement(book);
+    fragment.appendChild(extractedBook);
+  }
+
+  // Append the search result elements to the DOM
+  dataList.items.appendChild(fragment);
+
+  // Hide the search overlay
+  search.overlay.close();
+}
 
 search.cancelButton.addEventListener("click", () => {
   search.overlay.close();
